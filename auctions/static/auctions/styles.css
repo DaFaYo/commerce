@@ -1,0 +1,50 @@
+body {
+    padding: 10px;
+}
+
+.row {
+    margin-bottom: 10px;
+}
+
+.card {
+    flex-direction: row;
+    height: 100%;
+    line-height: 100%;
+    padding: 20px;
+    outline: 1px solid black;
+    position:relative;
+}
+
+.card .btn {
+    z-index: 2;
+    position: relative;
+ }
+
+.card-img-left {
+    width: 30vw;
+    height: 100%;
+  }
+
+textarea {
+    height: 50vh;
+    width: 50vw;
+}
+
+
+.link-spanner {
+    position:absolute; 
+    width:100%;
+    height:100%;
+    top:0;
+    left: 0;
+    z-index: 1;
+}
+
+#textbox {
+    white-space: initial;
+}
+
+li.comment:not(:last-child) { 
+    margin-bottom: 7px;  
+ }
+ 

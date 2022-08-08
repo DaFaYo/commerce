@@ -1,0 +1,19 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+
+<h2>Wishlist</h2>
+
+<ul>
+    {% for listing in user.listings.all %}
+
+        <li><a href="{% url 'details_listing' listing.id  %}">{{ listing.title }}</a></li>
+        
+    {% empty %}
+        <li>Empty wishlist</li>
+
+    {%  endfor %}   
+
+</ul>
+
+{% endblock %}

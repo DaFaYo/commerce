@@ -1,0 +1,70 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h2>Active Listings</h2>
+
+<div class="container">
+
+    {% for listing in listings %}
+
+    <div class="row">
+        <div class="col">
+
+            <div class="card">
+
+                <img class="card-img-left img-fluid" src="{{ listing.photo }}" alt="Image of listing {{ listing.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ listing.title }}</h5>
+                    <p class="card-text">Starting bid: {{ listing.starting_bid }}</p>
+                    <p class="card-text">Description: {{ listing.description }}</p>
+                    <h2>Categories</h2> 
+                    <ul>
+                        {% for category in listing.categories.all %}
+                           <li>{{ category }}</li>
+    
+                        {% empty %}
+                            <li>No category associated with this listing.</li>
+                        {% endfor %}
+                    </ul>
+                    {% if user.is_authenticated %}
+    
+                        {% if listing not in user.listings.all %}
+    
+                            <form action="{% url 'update_wishlist' listing.id  %}" method="post">
+                                {% csrf_token %}
+                                <input class="btn btn-primary" name="submit" type="submit" value="{{ add_to_wishlist }}">
+                            </form> 
+    
+                        {% else %}    
+                            
+                            <form action="{% url 'update_wishlist' listing.id  %}" method="post">
+                                {% csrf_token %}
+                                <input class="btn btn-primary" name="submit" type="submit" value="{{ remove_from_wishlist }}">
+                            </form> 
+                        
+                        {% endif %}
+                    {% endif %} 
+                </div>
+                <a href="{% url 'details_listing' listing.id  %}">
+                    <span class="link-spanner"></span>
+                </a>            
+            </div>       
+        </div>
+    </div>
+
+
+    {% empty %}
+
+    <div class="row">
+        <div class="col">
+
+            No listings.
+
+        </div>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

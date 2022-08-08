@@ -1,0 +1,132 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h1>Listing: {{ listing.title }}</h1>
+
+    <img class="card-img-left img-fluid" src="{{ listing.photo }}" alt="Image of listing {{ listing.title }}">
+
+    <ul>
+        <li>Price: {{ listing.starting_bid }}</li>
+        <li>Description: {{ listing.description }}</li>     
+    </ul>
+
+    
+    {% if listing_details %}
+
+        {% if user.is_authenticated %}
+            
+            {% if listing.active %}
+        
+                {% if user != listing_details.created_by %}
+                            
+                    {% if error_message %}
+                        <div class="alert alert-danger" role="alert">
+                            Error: {{ error_message }}
+                        </div>
+                    {% endif %}
+
+                    {% if bid_info_message %}
+                        <h8>{{ bid_info_message }}</h8>
+                    {% endif %}
+                                
+                    <form action="{% url 'details_listing' listing.id  %}" method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input class="btn btn-primary" name="submit" type="submit" value="Place Bid">
+                    </form>
+                
+                {% else %}
+
+                    <form action="{% url 'close_auction' listing.id  %}" method="post">
+                        {% csrf_token %}
+                        <input class="btn btn-primary" name="submit" type="submit" value="Close the auction">
+                    </form>                             
+                   
+                {% endif %}
+
+            {% else %}
+
+                {% if user == highest_bidder %}
+
+                    <h3>You won the auction! Congratulations!</h3>
+
+                {% else %}
+
+                    <h3>Auction is closed!</h3>
+
+                {% endif %}
+                       
+            {% endif %}
+                
+        {% endif %} 
+
+
+        <ul>
+            <li>Listing created by: {{ listing_details.created_by }}</li>
+            <li>Created at: {{ listing_details.created_at }}</li>
+            <li>Updated at: {{ listing_details.updated_at }}</li>   
+        </ul>
+
+    {% endif %}
+
+    <h2>Categories</h2>
+    <ul>
+        {% for category in listing.categories.all %}
+         <li>{{ category }}</li>
+
+         {% empty %}
+            <li>No category associated with this listing.</li>
+        {% endfor %}
+    </ul>
+
+    {% if user.is_authenticated %}
+    
+        {% if listing not in user.listings.all %}
+
+            <form action="{% url 'update_wishlist' listing.id  %}" method="post">
+                {% csrf_token %}
+                <input class="btn btn-primary" name="submit" type="submit" value="{{ add_to_wishlist }}">
+            </form> 
+
+        {% else %}    
+        
+            <form action="{% url 'update_wishlist' listing.id  %}" method="post">
+                {% csrf_token %}
+                <input class="btn btn-primary" name="submit" type="submit" value="{{ remove_from_wishlist }}">
+            </form> 
+    
+        {% endif %}
+
+        <h2>Add Comment</h2>
+
+        <form action="{% url 'details_listing' listing.id  %}" method="post">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <input class="btn btn-primary" name="submit" type="submit" value="Add comment">
+        </form>
+
+        <h2>Comments</h2>
+        <ul>
+            {% for comment in comments %}
+
+                <li class="comment"><span><b>{{ comment.user.username }}</b></span> {{ comment.created_at }}
+                    <div id="textbox" >
+                       {{ comment.comment }}
+                    </div>    
+                </li>
+
+            {% empty %}
+            
+                <li>No comments.</li>
+
+            {% endfor %}
+
+
+        </ul>
+
+    {% endif %} 
+
+
+   
+{% endblock %}
